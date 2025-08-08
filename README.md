@@ -6,13 +6,6 @@
 [![Circle](https://img.shields.io/badge/Circle-Wallets%20%26%20CCTP-00D4FF.svg)](https://developers.circle.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-363636?logo=solidity)](https://soliditylang.org/)
-[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/Coverage-92%25-brightgreen.svg)]()
-[![Gas Optimized](https://img.shields.io/badge/Gas-Optimized-orange.svg)]()
-
-[![ERC-4337](https://img.shields.io/badge/ERC--4337-Account%20Abstraction-blue.svg)](https://eips.ethereum.org/EIPS/eip-4337)
-[![UHI5](https://img.shields.io/badge/UHI5-Hookathon-purple.svg)]()
 
 ## Overview
 

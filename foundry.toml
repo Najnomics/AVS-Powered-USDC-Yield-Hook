@@ -12,6 +12,7 @@ remappings = [
     "@eigenlayer-middleware/interfaces/=lib/eigenlayer-middleware/src/interfaces/",
     "@eigenlayer-middleware/libraries/=lib/eigenlayer-middleware/src/libraries/",
     "chainlink-brownie-contracts/=lib/chainlink-brownie-contracts/",
+    "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/",
     "forge-std/=lib/forge-std/src/"
 ]
 

@@ -329,3 +329,4 @@ contract OracleAggregator {
         return timestamp > 0 && (block.timestamp - timestamp) <= maxDataAge;
     }
 }
+

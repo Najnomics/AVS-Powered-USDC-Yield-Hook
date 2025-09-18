@@ -58,3 +58,4 @@ interface IYieldOracle {
      */
     function isProtocolSupported(bytes32 protocolId) external view returns (bool supported);
 }
+

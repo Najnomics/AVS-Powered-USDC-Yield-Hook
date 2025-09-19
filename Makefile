@@ -1,239 +1,166 @@
-# EigenCrossCoW AVS Makefile
+# AVS-Powered USDC Yield Hook - Makefile
 # Comprehensive build, test, and deployment automation
 
-.PHONY: help install build test clean deploy lint format security gas-report coverage
+.PHONY: help install build test coverage clean deploy-avs build-avs test-avs
+.PHONY: test-unit test-integration test-fuzz test-fork test-fhe
+.PHONY: coverage-html coverage-lcov deploy-local deploy-testnet deploy-mainnet
+.PHONY: setup-fhe build-fhe
 
 # Default target
-help: ## Show this help message
-	@echo "EigenCrossCoW AVS - Available Commands:"
+help:
+	@echo "AVS-Powered USDC Yield Hook - Available Commands:"
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo "Development:"
+	@echo "  install          Install all dependencies"
+	@echo "  build           Build all contracts"
+	@echo "  test            Run all tests"
+	@echo "  coverage        Generate coverage report"
+	@echo "  clean           Clean build artifacts"
+	@echo ""
+	@echo "AVS Development:"
+	@echo "  build-avs       Build AVS components"
+	@echo "  test-avs        Run AVS tests"
+	@echo "  deploy-avs      Deploy AVS contracts"
+	@echo ""
+	@echo "Testing:"
+	@echo "  test-unit       Run unit tests only"
+	@echo "  test-integration Run integration tests only"
+	@echo "  test-fuzz       Run fuzz tests only"
+	@echo "  test-fork       Run fork tests only"
+	@echo "  test-fhe        Run FHE tests"
+	@echo ""
+	@echo "Coverage:"
+	@echo "  coverage-html   Generate HTML coverage report"
+	@echo "  coverage-lcov   Generate LCOV coverage report"
+	@echo ""
+	@echo "Deployment:"
+	@echo "  deploy-local    Deploy to local network"
+	@echo "  deploy-testnet  Deploy to testnet"
+	@echo "  deploy-mainnet  Deploy to mainnet"
+	@echo ""
+	@echo "FHE Development:"
+	@echo "  setup-fhe       Setup FHE environment"
+	@echo "  build-fhe       Build FHE components"
 
-# Installation
-install: install-solidity install-go install-docker ## Install all dependencies
-
-install-solidity: ## Install Solidity dependencies
-	@echo "Installing Solidity dependencies..."
+# Development Commands
+install:
+	@echo "Installing dependencies..."
 	forge install
+	cd avs && go mod download
+	@echo "Dependencies installed successfully!"
+
+build:
+	@echo "Building contracts..."
 	forge build
+	@echo "Contracts built successfully!"
 
-install-go: ## Install Go dependencies
-	@echo "Installing Go dependencies..."
-	cd avs-operator && go mod download && go mod tidy
-
-install-docker: ## Install Docker dependencies
-	@echo "Installing Docker dependencies..."
-	docker-compose pull
-
-# Building
-build: build-contracts build-operator ## Build all components
-
-build-contracts: ## Build Solidity contracts
-	@echo "Building Solidity contracts..."
-	forge build
-	@echo "✅ Contracts built successfully"
-
-build-operator: ## Build Go operator
-	@echo "Building Go operator..."
-	cd avs-operator && go build -o bin/operator cmd/operator/main.go
-	cd avs-operator && go build -o bin/simple-operator cmd/simple-operator/main.go
-	@echo "✅ Operator built successfully"
-
-# Testing
-test: test-solidity test-go test-integration ## Run all tests
-
-test-solidity: ## Run Solidity tests
-	@echo "Running Solidity tests..."
-	forge test --gas-report --coverage
-	@echo "✅ Solidity tests completed"
-
-test-go: ## Run Go tests
-	@echo "Running Go tests..."
-	cd avs-operator && go test -v -race -coverprofile=coverage.out ./...
-	@echo "✅ Go tests completed"
-
-test-integration: ## Run integration tests
-	@echo "Running integration tests..."
-	docker-compose up -d redis ethereum-node
-	sleep 10
-	cd avs-operator && go test -v -tags=integration ./...
-	docker-compose down
-	@echo "✅ Integration tests completed"
-
-test-performance: ## Run performance tests
-	@echo "Running performance tests..."
-	cd avs-operator && go test -v -tags=performance -bench=. ./...
-	@echo "✅ Performance tests completed"
-
-# Code Quality
-lint: lint-solidity lint-go ## Run all linting
-
-lint-solidity: ## Lint Solidity code
-	@echo "Linting Solidity code..."
-	forge fmt --check
-	@echo "✅ Solidity linting completed"
-
-lint-go: ## Lint Go code
-	@echo "Linting Go code..."
-	cd avs-operator && golint ./...
-	cd avs-operator && go vet ./...
-	@echo "✅ Go linting completed"
-
-format: format-solidity format-go ## Format all code
-
-format-solidity: ## Format Solidity code
-	@echo "Formatting Solidity code..."
-	forge fmt
-	@echo "✅ Solidity formatting completed"
-
-format-go: ## Format Go code
-	@echo "Formatting Go code..."
-	cd avs-operator && go fmt ./...
-	@echo "✅ Go formatting completed"
-
-# Security
-security: security-solidity security-go ## Run all security checks
-
-security-solidity: ## Run Solidity security analysis
-	@echo "Running Solidity security analysis..."
-	slither src/ --filter-paths "test/|script/|lib/"
-	@echo "✅ Solidity security analysis completed"
-
-security-go: ## Run Go security analysis
-	@echo "Running Go security analysis..."
-	cd avs-operator && gosec ./...
-	@echo "✅ Go security analysis completed"
-
-# Gas and Coverage
-gas-report: ## Generate gas report
-	@echo "Generating gas report..."
+test:
+	@echo "Running all tests..."
 	forge test --gas-report
-	@echo "✅ Gas report generated"
+	@echo "All tests completed!"
 
-coverage: ## Generate coverage report
+coverage:
 	@echo "Generating coverage report..."
-	forge coverage --report lcov
-	cd avs-operator && go tool cover -html=coverage.out -o coverage.html
-	@echo "✅ Coverage report generated"
+	forge coverage --ir-minimum
+	@echo "Coverage report generated!"
 
-# Deployment
-deploy: deploy-dev ## Deploy to development
+clean:
+	@echo "Cleaning build artifacts..."
+	forge clean
+	cd avs && go clean
+	@echo "Build artifacts cleaned!"
 
-deploy-dev: ## Deploy to development
-	@echo "Deploying to development..."
-	forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
-	@echo "✅ Development deployment completed"
+# AVS Development Commands
+build-avs:
+	@echo "Building AVS components..."
+	cd avs && go build -o bin/operator ./cmd
+	cd avs && go build -o bin/crosscow-avs ./cmd
+	@echo "AVS components built successfully!"
 
-deploy-staging: ## Deploy to staging
-	@echo "Deploying to staging..."
-	@echo "⚠️  Staging deployment not implemented yet"
-	@echo "✅ Staging deployment completed"
+test-avs:
+	@echo "Running AVS tests..."
+	cd avs && go test ./...
+	@echo "AVS tests completed!"
 
-deploy-prod: ## Deploy to production
-	@echo "Deploying to production..."
-	@echo "⚠️  Production deployment not implemented yet"
-	@echo "✅ Production deployment completed"
+deploy-avs:
+	@echo "Deploying AVS contracts..."
+	cd avs/contracts && forge script script/DeployAVS.s.sol --rpc-url $(RPC_URL) --broadcast
+	@echo "AVS contracts deployed!"
 
-# Docker
-docker-build: ## Build Docker images
-	@echo "Building Docker images..."
-	docker-compose build
-	@echo "✅ Docker images built"
+# Testing Commands
+test-unit:
+	@echo "Running unit tests..."
+	forge test --match-contract "Unit" --gas-report
+	@echo "Unit tests completed!"
 
-docker-up: ## Start Docker services
-	@echo "Starting Docker services..."
-	docker-compose up -d
-	@echo "✅ Docker services started"
+test-integration:
+	@echo "Running integration tests..."
+	forge test --match-contract "Integration" --gas-report
+	@echo "Integration tests completed!"
 
-docker-down: ## Stop Docker services
-	@echo "Stopping Docker services..."
-	docker-compose down
-	@echo "✅ Docker services stopped"
+test-fuzz:
+	@echo "Running fuzz tests..."
+	forge test --match-contract "Fuzz" --gas-report
+	@echo "Fuzz tests completed!"
 
-docker-logs: ## Show Docker logs
-	@echo "Showing Docker logs..."
-	docker-compose logs -f
+test-fork:
+	@echo "Running fork tests..."
+	forge test --match-contract "Fork" --fork-url $(MAINNET_RPC_URL) --gas-report
+	@echo "Fork tests completed!"
 
-# Development
-dev: docker-up ## Start development environment
-	@echo "Starting development environment..."
-	@echo "✅ Development environment ready"
-	@echo "📊 Grafana: http://localhost:3000"
-	@echo "📈 Prometheus: http://localhost:9090"
-	@echo "🔍 Alertmanager: http://localhost:9093"
+test-fhe:
+	@echo "Running FHE tests..."
+	forge test --match-contract "FHE" --gas-report
+	@echo "FHE tests completed!"
 
-dev-stop: docker-down ## Stop development environment
-	@echo "Stopping development environment..."
-	@echo "✅ Development environment stopped"
+# Coverage Commands
+coverage-html:
+	@echo "Generating HTML coverage report..."
+	forge coverage --ir-minimum --report html
+	@echo "HTML coverage report generated in coverage/"
 
-# Monitoring
-monitor: ## Start monitoring services
-	@echo "Starting monitoring services..."
-	docker-compose up -d prometheus grafana alertmanager
-	@echo "✅ Monitoring services started"
-	@echo "📊 Grafana: http://localhost:3000"
-	@echo "📈 Prometheus: http://localhost:9090"
+coverage-lcov:
+	@echo "Generating LCOV coverage report..."
+	forge coverage --ir-minimum --report lcov
+	@echo "LCOV coverage report generated in lcov.info"
 
-# Documentation
-docs: ## Generate documentation
-	@echo "Generating documentation..."
-	forge doc --build
-	@echo "✅ Documentation generated"
+# Deployment Commands
+deploy-local:
+	@echo "Deploying to local network..."
+	forge script script/DeployYieldOptimizationHook.s.sol --rpc-url http://localhost:8545 --broadcast
+	@echo "Deployed to local network!"
 
-# Cleanup
-clean: clean-contracts clean-go clean-docker ## Clean all build artifacts
+deploy-testnet:
+	@echo "Deploying to testnet..."
+	forge script script/DeployYieldOptimizationHook.s.sol --rpc-url $(TESTNET_RPC_URL) --broadcast --verify
+	@echo "Deployed to testnet!"
 
-clean-contracts: ## Clean Solidity build artifacts
-	@echo "Cleaning Solidity build artifacts..."
-	rm -rf out/
-	rm -rf cache/
-	@echo "✅ Solidity artifacts cleaned"
+deploy-mainnet:
+	@echo "Deploying to mainnet..."
+	forge script script/DeployYieldOptimizationHook.s.sol --rpc-url $(MAINNET_RPC_URL) --broadcast --verify
+	@echo "Deployed to mainnet!"
 
-clean-go: ## Clean Go build artifacts
-	@echo "Cleaning Go build artifacts..."
-	cd avs-operator && go clean
-	cd avs-operator && rm -rf bin/
-	@echo "✅ Go artifacts cleaned"
+# FHE Development Commands
+setup-fhe:
+	@echo "Setting up FHE environment..."
+	cd context/cofhe-scaffold-eth && npm install
+	cd context/cofhejs && npm install
+	@echo "FHE environment setup complete!"
 
-clean-docker: ## Clean Docker artifacts
-	@echo "Cleaning Docker artifacts..."
-	docker-compose down -v
-	docker system prune -f
-	@echo "✅ Docker artifacts cleaned"
+build-fhe:
+	@echo "Building FHE components..."
+	cd context/cofhejs && npm run build
+	@echo "FHE components built successfully!"
 
-# Utilities
-check-deps: ## Check dependencies
-	@echo "Checking dependencies..."
-	@command -v forge >/dev/null 2>&1 || { echo "❌ Foundry not installed"; exit 1; }
-	@command -v go >/dev/null 2>&1 || { echo "❌ Go not installed"; exit 1; }
-	@command -v docker >/dev/null 2>&1 || { echo "❌ Docker not installed"; exit 1; }
-	@echo "✅ All dependencies installed"
+# Environment Variables
+# Set these in your .env file or export them
+# RPC_URL=your_rpc_url
+# MAINNET_RPC_URL=your_mainnet_rpc_url
+# TESTNET_RPC_URL=your_testnet_rpc_url
+# PRIVATE_KEY=your_private_key
+# ETHERSCAN_API_KEY=your_etherscan_api_key
 
-setup: check-deps install ## Setup development environment
-	@echo "Setting up development environment..."
-	@echo "✅ Development environment ready"
-
-# CI/CD
-ci: install test lint security coverage ## Run CI pipeline
-	@echo "✅ CI pipeline completed"
-
-# Production readiness check
-prod-check: test security coverage ## Check production readiness
-	@echo "Checking production readiness..."
-	@echo "✅ Production readiness check completed"
-
-# Quick start
-quickstart: setup dev ## Quick start for new developers
-	@echo "🚀 Quick start completed!"
-	@echo "📚 Next steps:"
-	@echo "   1. Read the documentation in docs/"
-	@echo "   2. Run 'make test' to verify everything works"
-	@echo "   3. Start developing!"
-
-# Version
-version: ## Show version information
-	@echo "EigenCrossCoW AVS Version Information:"
-	@echo "Solidity: $(shell forge --version)"
-	@echo "Go: $(shell go version)"
-	@echo "Docker: $(shell docker --version)"
-	@echo "Git: $(shell git --version)"
+# Default values for testing
+RPC_URL ?= http://localhost:8545
+MAINNET_RPC_URL ?= https://eth-mainnet.g.alchemy.com/v2/your-api-key
+TESTNET_RPC_URL ?= https://eth-sepolia.g.alchemy.com/v2/your-api-key

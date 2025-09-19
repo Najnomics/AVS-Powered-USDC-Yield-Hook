@@ -3,6 +3,7 @@ pragma solidity ^0.8.27;
 
 import {Test, console} from "forge-std/Test.sol";
 import {ChainlinkYieldOracle} from "../../src/oracles/ChainlinkYieldOracle.sol";
+import {IYieldOracle} from "../../src/interfaces/IYieldOracle.sol";
 import {MockV3Aggregator} from "@chainlink/contracts/src/v0.8/tests/MockV3Aggregator.sol";
 
 /**
@@ -43,20 +44,12 @@ contract ChainlinkYieldOracleUnitTest is Test {
         // Deploy mock price feeds
         mockAaveFeed = new MockV3Aggregator(
             DECIMALS,
-            int256(AAVE_YIELD),
-            1, // roundId
-            1, // startedAt
-            block.timestamp, // updatedAt
-            1 // answeredInRound
+            int256(AAVE_YIELD)
         );
         
         mockCompoundFeed = new MockV3Aggregator(
             DECIMALS,
-            int256(COMPOUND_YIELD),
-            1,
-            1,
-            block.timestamp,
-            1
+            int256(COMPOUND_YIELD)
         );
         
         // Deploy oracle
@@ -107,11 +100,7 @@ contract ChainlinkYieldOracleUnitTest is Test {
         // Create a mock that will fail validation
         MockV3Aggregator badFeed = new MockV3Aggregator(
             DECIMALS,
-            -1, // negative yield
-            1,
-            1,
-            block.timestamp,
-            1
+            -1 // negative yield
         );
         
         vm.prank(OWNER);
@@ -513,7 +502,7 @@ contract ChainlinkYieldOracleUnitTest is Test {
     
     function test_AddProtocol_Event() public {
         vm.expectEmit(true, true, true, true);
-        emit ChainlinkYieldOracle.ProtocolAdded(AAVE_PROTOCOL, address(mockAaveFeed));
+        emit IYieldOracle.ProtocolAdded(AAVE_PROTOCOL, address(mockAaveFeed));
         
         vm.prank(OWNER);
         oracle.addProtocol(AAVE_PROTOCOL, address(mockAaveFeed));
@@ -524,7 +513,7 @@ contract ChainlinkYieldOracleUnitTest is Test {
         oracle.addProtocol(AAVE_PROTOCOL, address(mockAaveFeed));
         
         vm.expectEmit(true, true, true, true);
-        emit ChainlinkYieldOracle.ProtocolRemoved(AAVE_PROTOCOL);
+        emit IYieldOracle.ProtocolRemoved(AAVE_PROTOCOL);
         
         vm.prank(OWNER);
         oracle.removeProtocol(AAVE_PROTOCOL);

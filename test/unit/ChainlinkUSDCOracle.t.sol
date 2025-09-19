@@ -39,11 +39,7 @@ contract ChainlinkUSDCOracleUnitTest is Test {
         // Deploy mock price feed
         mockPriceFeed = new MockV3Aggregator(
             DECIMALS,
-            int256(INITIAL_PRICE),
-            1, // roundId
-            1, // startedAt
-            block.timestamp, // updatedAt
-            1 // answeredInRound
+            int256(INITIAL_PRICE)
         );
         
         // Deploy oracle
@@ -78,11 +74,7 @@ contract ChainlinkUSDCOracleUnitTest is Test {
         // Create a mock that will fail validation
         MockV3Aggregator badFeed = new MockV3Aggregator(
             DECIMALS,
-            -1, // negative price
-            1,
-            1,
-            block.timestamp,
-            1
+            -1 // negative price
         );
         
         vm.expectRevert(ChainlinkUSDCOracle.InvalidPriceFeed.selector);

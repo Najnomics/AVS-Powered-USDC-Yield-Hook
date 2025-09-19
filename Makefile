@@ -27,7 +27,6 @@ help:
 	@echo "  test-integration Run integration tests only"
 	@echo "  test-fuzz       Run fuzz tests only"
 	@echo "  test-fork       Run fork tests only"
-	@echo "  test-fhe        Run FHE tests"
 	@echo ""
 	@echo "Coverage:"
 	@echo "  coverage-html   Generate HTML coverage report"
@@ -37,10 +36,6 @@ help:
 	@echo "  deploy-local    Deploy to local network"
 	@echo "  deploy-testnet  Deploy to testnet"
 	@echo "  deploy-mainnet  Deploy to mainnet"
-	@echo ""
-	@echo "FHE Development:"
-	@echo "  setup-fhe       Setup FHE environment"
-	@echo "  build-fhe       Build FHE components"
 
 # Development Commands
 install:
@@ -108,10 +103,6 @@ test-fork:
 	forge test --match-contract "Fork" --fork-url $(MAINNET_RPC_URL) --gas-report
 	@echo "Fork tests completed!"
 
-test-fhe:
-	@echo "Running FHE tests..."
-	forge test --match-contract "FHE" --gas-report
-	@echo "FHE tests completed!"
 
 # Coverage Commands
 coverage-html:
@@ -140,17 +131,6 @@ deploy-mainnet:
 	forge script script/DeployYieldOptimizationHook.s.sol --rpc-url $(MAINNET_RPC_URL) --broadcast --verify
 	@echo "Deployed to mainnet!"
 
-# FHE Development Commands
-setup-fhe:
-	@echo "Setting up FHE environment..."
-	cd context/cofhe-scaffold-eth && npm install
-	cd context/cofhejs && npm install
-	@echo "FHE environment setup complete!"
-
-build-fhe:
-	@echo "Building FHE components..."
-	cd context/cofhejs && npm run build
-	@echo "FHE components built successfully!"
 
 # Environment Variables
 # Set these in your .env file or export them

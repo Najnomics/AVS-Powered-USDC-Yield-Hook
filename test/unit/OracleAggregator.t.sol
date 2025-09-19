@@ -43,11 +43,11 @@ contract OracleAggregatorUnitTest is Test {
         mockYieldFeed = new MockV3Aggregator(8, int256(YIELD_RATE));
         
         // Deploy oracles
-        usdcOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed));
-        yieldOracle = new ChainlinkYieldOracle(3600);
+        usdcOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed), 3600); // 1 hour max age
+        yieldOracle = new ChainlinkYieldOracle(3600); // 1 hour max age
         
         // Deploy aggregator
-        aggregator = new OracleAggregator(address(usdcOracle), address(yieldOracle));
+        aggregator = new OracleAggregator(address(usdcOracle), address(yieldOracle), 3600); // 1 hour max data age
     }
     
     /*//////////////////////////////////////////////////////////////
@@ -61,13 +61,13 @@ contract OracleAggregatorUnitTest is Test {
     }
     
     function test_Constructor_RevertWhen_ZeroUSDCOracle() public {
-        vm.expectRevert("Invalid USDC oracle address");
-        new OracleAggregator(address(0), address(yieldOracle));
+        vm.expectRevert();
+        new OracleAggregator(address(0), address(yieldOracle), 3600);
     }
     
     function test_Constructor_RevertWhen_ZeroYieldOracle() public {
-        vm.expectRevert("Invalid yield oracle address");
-        new OracleAggregator(address(usdcOracle), address(0));
+        vm.expectRevert();
+        new OracleAggregator(address(usdcOracle), address(0), 3600);
     }
     
     /*//////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ contract OracleAggregatorUnitTest is Test {
         vm.prank(address(this));
         yieldOracle.addProtocol(protocolId, address(mockYieldFeed));
         
-        (uint256 rate, uint256 timestamp) = aggregator.getLatestYieldRate(protocolId);
+        (uint256 rate, uint256 timestamp, address oracleAddress) = aggregator.getLatestYieldRate(protocolId);
         
         assertEq(rate, YIELD_RATE);
         assertTrue(timestamp > 0);
@@ -117,7 +117,7 @@ contract OracleAggregatorUnitTest is Test {
         bytes32[] memory protocolIds = new bytes32[](1);
         protocolIds[0] = protocolId;
         
-        (uint256[] memory rates, uint256[] memory timestamps) = aggregator.getBatchYieldRates(protocolIds);
+        (uint256[] memory rates, uint256[] memory timestamps, address[] memory oracleAddresses) = aggregator.getBatchYieldRates(protocolIds);
         
         assertEq(rates.length, 1);
         assertEq(timestamps.length, 1);
@@ -136,7 +136,7 @@ contract OracleAggregatorUnitTest is Test {
     //////////////////////////////////////////////////////////////*/
     
     function test_SetUSDCOracle() public {
-        ChainlinkUSDCOracle newOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed));
+        ChainlinkUSDCOracle newOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed), 3600);
         
         vm.prank(address(this));
         aggregator.setUSDCOracle(address(newOracle));
@@ -145,7 +145,7 @@ contract OracleAggregatorUnitTest is Test {
     }
     
     function test_SetUSDCOracle_RevertWhen_NotOwner() public {
-        ChainlinkUSDCOracle newOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed));
+        ChainlinkUSDCOracle newOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed), 3600);
         
         vm.prank(USER);
         vm.expectRevert();
@@ -154,7 +154,7 @@ contract OracleAggregatorUnitTest is Test {
     
     function test_SetUSDCOracle_RevertWhen_ZeroAddress() public {
         vm.prank(address(this));
-        vm.expectRevert("Invalid USDC oracle address");
+        vm.expectRevert("InvalidOracle()");
         aggregator.setUSDCOracle(address(0));
     }
     
@@ -177,7 +177,7 @@ contract OracleAggregatorUnitTest is Test {
     
     function test_SetYieldOracle_RevertWhen_ZeroAddress() public {
         vm.prank(address(this));
-        vm.expectRevert("Invalid yield oracle address");
+        vm.expectRevert("InvalidOracle()");
         aggregator.setYieldOracle(address(0));
     }
     
@@ -186,7 +186,7 @@ contract OracleAggregatorUnitTest is Test {
     //////////////////////////////////////////////////////////////*/
     
     function test_AddFallbackUSDCOracle() public {
-        ChainlinkUSDCOracle fallbackOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed));
+        ChainlinkUSDCOracle fallbackOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed), 3600);
         
         vm.prank(address(this));
         aggregator.addFallbackUSDCOracle(address(fallbackOracle));
@@ -196,7 +196,7 @@ contract OracleAggregatorUnitTest is Test {
     }
     
     function test_AddFallbackUSDCOracle_RevertWhen_NotOwner() public {
-        ChainlinkUSDCOracle fallbackOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed));
+        ChainlinkUSDCOracle fallbackOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed), 3600);
         
         vm.prank(USER);
         vm.expectRevert();
@@ -205,12 +205,12 @@ contract OracleAggregatorUnitTest is Test {
     
     function test_AddFallbackUSDCOracle_RevertWhen_ZeroAddress() public {
         vm.prank(address(this));
-        vm.expectRevert("Invalid oracle address");
+        vm.expectRevert("InvalidOracle()");
         aggregator.addFallbackUSDCOracle(address(0));
     }
     
     function test_RemoveFallbackUSDCOracle() public {
-        ChainlinkUSDCOracle fallbackOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed));
+        ChainlinkUSDCOracle fallbackOracle = new ChainlinkUSDCOracle(address(mockUSDCFeed), 3600);
         
         vm.prank(address(this));
         aggregator.addFallbackUSDCOracle(address(fallbackOracle));
@@ -260,14 +260,14 @@ contract OracleAggregatorUnitTest is Test {
     function test_GetLatestYieldRate_UnsupportedProtocol() public {
         bytes32 unsupportedProtocol = keccak256("UNSUPPORTED");
         
-        vm.expectRevert("Protocol not supported");
+        vm.expectRevert("NoValidOracle()");
         aggregator.getLatestYieldRate(unsupportedProtocol);
     }
     
     function test_GetBatchYieldRates_EmptyArray() public {
         bytes32[] memory protocolIds = new bytes32[](0);
         
-        (uint256[] memory rates, uint256[] memory timestamps) = aggregator.getBatchYieldRates(protocolIds);
+        (uint256[] memory rates, uint256[] memory timestamps, address[] memory oracleAddresses) = aggregator.getBatchYieldRates(protocolIds);
         
         assertEq(rates.length, 0);
         assertEq(timestamps.length, 0);

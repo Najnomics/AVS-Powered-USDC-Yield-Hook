@@ -4,7 +4,6 @@
 [![Uniswap V4](https://img.shields.io/badge/Uniswap-V4%20Hook-FF007A.svg)](https://github.com/Uniswap/v4-core)
 [![EigenLayer](https://img.shields.io/badge/EigenLayer-AVS%20Powered-9C88FF.svg)](https://eigenlayer.xyz/)
 [![Circle](https://img.shields.io/badge/Circle-Wallets%20%26%20CCTP-00D4FF.svg)](https://developers.circle.com/)
-[![FHEnix](https://img.shields.io/badge/FHEnix-FHE%20Enabled-FF6B6B.svg)](https://fhenix.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Test Coverage](https://img.shields.io/badge/Test%20Coverage-95%25-brightgreen.svg)](https://github.com/your-org/avs-powered-usdc-yield)
 [![Tests](https://img.shields.io/badge/Tests-200%2B%20Passing-brightgreen.svg)](https://github.com/your-org/avs-powered-usdc-yield)
@@ -14,18 +13,16 @@
 **Primary Partners:**
 - **EigenLayer** - Actively Validated Services (AVS) infrastructure for decentralized yield intelligence
 - **Circle** - Programmable Wallets and CCTP v2 for cross-chain USDC transfers
-- **FHEnix** - Fully Homomorphic Encryption for privacy-preserving yield calculations
 
 **Templates Used:**
 - **Hourglass AVS Template** - EigenLayer AVS development framework
 - **DevKit CLI** - EigenLayer development toolkit for AVS deployment
-- **FHEnix Hook Template** - FHE-enabled Uniswap V4 hook development
 
 ## 📋 Project Description
 
-An intelligent Uniswap v4 Hook that leverages EigenLayer's Actively Validated Services (AVS) to monitor cross-protocol yield opportunities and automatically rebalances USDC positions using Circle's Wallets and CCTP v2. This system creates the first fully automated, institutionally-focused yield optimization protocol built natively into Uniswap v4 with privacy-preserving calculations powered by FHEnix.
+An intelligent Uniswap v4 Hook that leverages EigenLayer's Actively Validated Services (AVS) to monitor cross-protocol yield opportunities and automatically rebalances USDC positions using Circle's Wallets and CCTP v2. This system creates the first fully automated, institutionally-focused yield optimization protocol built natively into Uniswap v4.
 
-**Sponsors:** EigenLayer (Benefactor) + Circle (Benefactor) + FHEnix (Benefactor)  
+**Sponsors:** EigenLayer (Benefactor) + Circle (Benefactor)  
 **Prize Tier:** Combined Benefactor eligibility  
 **Target Market:** Automated wealth management for USDC holders
 
@@ -39,17 +36,15 @@ Current DeFi yield strategies face critical inefficiencies:
 4. **Information Asymmetry**: Institutional players have better access to yield data
 5. **Cross-Chain Friction**: USDC yield varies significantly across chains but rebalancing is complex
 6. **Security Concerns**: Users must trust multiple protocols and manage private keys
-7. **Privacy Issues**: Yield strategies and positions are publicly visible on-chain
 
 ## 💡 Solution
 
-### Core Innovation: AVS-Powered Yield Intelligence with FHE Privacy
+### Core Innovation: AVS-Powered Yield Intelligence
 
-Our system combines four cutting-edge technologies:
+Our system combines three cutting-edge technologies:
 - **EigenLayer AVS**: Decentralized network monitoring yield opportunities with economic security
 - **Circle Wallets**: Programmable, secure USDC custody with automated rebalancing
 - **Uniswap v4 Hook**: Native integration into the most liquid DEX for seamless execution
-- **FHEnix FHE**: Privacy-preserving yield calculations and position management
 
 ### Technical Architecture
 
@@ -62,11 +57,6 @@ graph TB
         D[Risk Assessors]
     end
     
-    subgraph "FHEnix Privacy Layer"
-        E[FHE Yield Calculations]
-        F[Private Position Management]
-        G[Encrypted Strategy Data]
-    end
     
     subgraph "Uniswap V4 Hook"
         H[YieldOptimizationHook]
@@ -91,9 +81,6 @@ graph TB
     B --> H
     C --> H
     D --> H
-    E --> H
-    F --> H
-    G --> H
     H --> K
     H --> L
     H --> M
@@ -112,7 +99,6 @@ sequenceDiagram
     participant User
     participant Hook as YieldOptimizationHook
     participant AVS as YieldIntelligenceAVS
-    participant FHE as FHEnix Layer
     participant Circle as CircleWallets
     participant CCTP as CCTP v2
     participant Protocol as YieldProtocol
@@ -121,10 +107,7 @@ sequenceDiagram
     Hook->>AVS: Query current yield opportunities
     AVS-->>Hook: Return ranked yield signals
     
-    Hook->>FHE: Encrypt user position data
-    FHE-->>Hook: Return encrypted calculations
-    
-    Hook->>Hook: Calculate optimal rebalancing (FHE)
+    Hook->>Hook: Calculate optimal rebalancing
     
     alt Rebalancing beneficial
         Hook->>Circle: Execute rebalancing strategy
@@ -147,22 +130,17 @@ sequenceDiagram
 - **Technology**: EigenLayer AVS with economic security
 - **Features**: Multi-chain monitoring, risk assessment, real-time data
 
-### 2. FHEnix Privacy Layer
-- **Purpose**: Privacy-preserving yield calculations and position management
-- **Technology**: Fully Homomorphic Encryption
-- **Features**: Encrypted calculations, private strategy data, secure position tracking
-
-### 3. Smart Rebalancing Hook
+### 2. Smart Rebalancing Hook
 - **Purpose**: Uniswap V4 integration for automated yield optimization
-- **Technology**: Native hook architecture with FHE support
+- **Technology**: Native hook architecture
 - **Features**: Real-time rebalancing, gas optimization, user strategy management
 
-### 4. Circle Wallets Integration
+### 3. Circle Wallets Integration
 - **Purpose**: Programmable USDC custody and cross-chain transfers
 - **Technology**: Circle Wallets + CCTP v2
 - **Features**: Automated execution, native USDC transfers, gas abstraction
 
-### 5. Protocol Adapters
+### 4. Protocol Adapters
 - **Purpose**: Standardized integration with yield protocols
 - **Technology**: Modular adapter pattern
 - **Features**: Aave V3, Compound V3, Morpho, Maker DSR support
@@ -281,7 +259,6 @@ AVS-Powered-USDC-Yield-Hook/
 - **Node.js** 18+ for frontend components
 - **EigenLayer Testnet Access** for AVS development
 - **Circle Developer Account** for Wallets and CCTP integration
-- **FHEnix Environment** for FHE development
 
 ### Quick Start
 
@@ -371,10 +348,6 @@ make deploy-local    # Deploy to local network
 make deploy-testnet  # Deploy to testnet
 make deploy-mainnet  # Deploy to mainnet
 
-# FHE Development
-make setup-fhe       # Setup FHE environment
-make test-fhe        # Run FHE tests
-make build-fhe       # Build FHE components
 ```
 
 ## 🔧 Key Features
@@ -392,7 +365,6 @@ make build-fhe       # Build FHE components
 - **User Strategy Management** - Customizable yield strategies
 
 ### 🚧 In Development
-- **FHEnix Integration** - Privacy-preserving calculations
 - **Advanced Analytics** - Yield performance tracking
 - **Mobile Interface** - User-friendly mobile app
 - **Institutional Features** - Compliance and reporting tools
@@ -424,7 +396,6 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - **Smart Contract Audits**: Planned with top-tier firms
 - **AVS Security Review**: EigenLayer security assessment
 - **Circle Integration Review**: Circle security team validation
-- **FHE Security Review**: FHEnix security assessment
 - **Bug Bounty Program**: $100K+ reward pool
 
 ## 📄 License
@@ -445,9 +416,8 @@ Special thanks to:
 - **EigenLayer Team** for pioneering restaking and AVS infrastructure
 - **Circle Team** for building the future of programmable money
 - **Uniswap Team** for creating the most advanced DEX architecture
-- **FHEnix Team** for enabling privacy-preserving DeFi
 - **UHI5 Organizers** for fostering innovation in DeFi
 
 ---
 
-*This project is submitted for the Uniswap v4 Hookathon (UHI5), targeting EigenLayer (Benefactor), Circle (Benefactor), and FHEnix (Benefactor) sponsor prizes. Building the future of automated wealth management with restaked security, programmable money, and privacy-preserving calculations.*
+*This project is submitted for the Uniswap v4 Hookathon (UHI5), targeting EigenLayer (Benefactor) and Circle (Benefactor) sponsor prizes. Building the future of automated wealth management with restaked security and programmable money.*

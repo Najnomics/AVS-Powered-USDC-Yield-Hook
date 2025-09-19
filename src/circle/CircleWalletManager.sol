@@ -151,6 +151,9 @@ contract CircleWalletManager is ICircleWalletManager, ReentrancyGuard, Ownable, 
     constructor(
         ICCTPIntegration _cctpIntegration
     ) Ownable(msg.sender) {
+        if (address(_cctpIntegration) == address(0)) {
+            revert("Invalid CCTP integration");
+        }
         cctpIntegration = _cctpIntegration;
         
         // Initialize supported protocols

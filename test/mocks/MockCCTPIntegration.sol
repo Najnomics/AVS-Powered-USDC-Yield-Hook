@@ -285,13 +285,14 @@ contract MockCCTPIntegration is ICCTPIntegration {
         else if (chainId == 8453) domain = 6; // Base
         else if (chainId == 42161) domain = 3; // Arbitrum
         else if (chainId == 137) domain = 7;   // Polygon
+        else if (chainId == 31337) domain = 0; // Test network (treat as Ethereum)
         else revert UnsupportedDomain();
     }
     
     function domainToChainId(uint32 domain)
         public pure override returns (uint256 chainId)
     {
-        if (domain == 0) chainId = 1;          // Ethereum
+        if (domain == 0) chainId = 1;          // Ethereum (also covers test network 31337)
         else if (domain == 6) chainId = 8453;  // Base
         else if (domain == 3) chainId = 42161; // Arbitrum
         else if (domain == 7) chainId = 137;   // Polygon

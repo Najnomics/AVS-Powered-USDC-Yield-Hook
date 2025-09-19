@@ -141,9 +141,7 @@ contract CCTPIntegrationUnitTest is Test {
         uint256 excessAmount = INITIAL_BALANCE + 1;
         
         vm.prank(address(this));
+        vm.expectRevert();
         cctpIntegration.emergencyWithdraw(address(usdc), address(this), excessAmount);
-        
-        // Should succeed but only transfer available balance
-        assertTrue(true);
     }
 }

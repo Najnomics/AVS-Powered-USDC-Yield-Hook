@@ -297,6 +297,8 @@ contract YieldOptimizationHook is BaseHook, ReentrancyGuard, Ownable, Pausable {
     }
     
     function manualRebalance() external nonReentrant whenNotPaused {
+        // Check cooldown period
+        require(lastRebalance[msg.sender] == 0 || block.timestamp - lastRebalance[msg.sender] >= REBALANCE_COOLDOWN, "Rebalancing cooldown not met");
         require(_shouldRebalance(msg.sender), "No profitable rebalancing opportunity");
         _executeYieldOptimization(msg.sender);
     }

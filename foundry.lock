@@ -4,5 +4,8 @@
       "name": "1.3.0",
       "rev": "5cb41fbc9b525338b6098da5ea7dd0b7e92f89e4"
     }
+  },
+  "lib/v4-core": {
+    "rev": "59d3ecf53afa9264a16bba0e38f4c5d2231f80bc"
   }
 }

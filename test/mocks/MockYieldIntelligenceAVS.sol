@@ -227,7 +227,7 @@ contract MockYieldIntelligenceAVS is IYieldIntelligenceAVS {
             improvement: projectedYield > 400 ? projectedYield - 400 : 0,
             confidence: confidence,
             maxAmount: maxAmount,
-            expiresAt: block.timestamp + 600, // 10 minutes
+            expiresAt: block.timestamp + 86400, // 24 hours
             additionalData: ""
         });
         

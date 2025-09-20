@@ -90,7 +90,8 @@ dist/
 build/
 
 # Dependency directories
- # Foundry dependencies are managed via submodules
+# Foundry dependencies are managed via submodules
 
+# Development context (not integrated)
 context/
 

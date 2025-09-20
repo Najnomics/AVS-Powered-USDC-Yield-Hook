@@ -239,12 +239,8 @@ AVS-Powered-USDC-Yield-Hook/
 │   └── chainlink-brownie-contracts/    # Chainlink oracles
 │
 ├── context/                            # Development Context
-│   ├── cofhe-mock-contracts/          # FHE mock contracts
-│   ├── cofhe-scaffold-eth/            # FHE scaffold
-│   ├── cofhejs/                       # FHE JavaScript library
 │   ├── devkit-cli/                    # EigenLayer devkit
-│   ├── hourglass-avs-template/        # AVS template
-│   └── fhe-hook-template/             # FHE hook template
+│   └── hourglass-avs-template/        # AVS template
 │
 ├── foundry.toml                        # Foundry configuration
 ├── Makefile                           # Build automation
